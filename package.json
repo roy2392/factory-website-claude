@@ -1,0 +1,20 @@
+{
+  "name": "axion-logistics",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AXION — a futuristic logistics platform with immersive 3D truck visualizations, cinematic scroll storytelling and a premium industrial sci-fi aesthetic.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.13",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
