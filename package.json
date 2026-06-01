@@ -5,9 +5,10 @@
   "type": "module",
   "description": "AXION — a futuristic logistics platform with immersive 3D truck visualizations, cinematic scroll storytelling and a premium industrial sci-fi aesthetic.",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open --host",
+    "start": "vite --open --host",
     "build": "vite build",
-    "preview": "vite preview --host"
+    "preview": "vite preview --open --host"
   },
   "dependencies": {
     "gsap": "^3.12.5",
