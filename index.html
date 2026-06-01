@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05070d" />
+    <meta
+      name="description"
+      content="AXION — autonomous logistics, rendered in real time. A futuristic freight operating system with immersive 3D truck visualizations and cinematic scroll storytelling."
+    />
+    <title>AXION — Autonomous Logistics, Rendered in Real Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305070d'/%3E%3Cpath d='M16 5l10 6v10l-10 6-10-6V11z' fill='none' stroke='%2300e5ff' stroke-width='1.6'/%3E%3C/svg%3E" />
+    <script type="module" crossorigin src="./assets/index-y51NYSVM.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/gsap-SFc2wnMY.js">
+    <link rel="modulepreload" crossorigin href="./assets/three-RKi0MHec.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-BPKxbnZP.css">
+  </head>
+  <body>
+    <!-- ===== Preloader ===== -->
+    <div class="preloader" id="preloader">
+      <div class="preloader__inner">
+        <div class="preloader__mark">AXION</div>
+        <div class="preloader__bar"><span id="preloaderBar"></span></div>
+        <div class="preloader__meta">
+          <span id="preloaderPct">0%</span>
+          <span>INITIALIZING FLEET CORE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Fixed WebGL canvas ===== -->
+    <canvas id="webgl"></canvas>
+
+    <!-- ===== Floating HUD / OS chrome ===== -->
+    <header class="hud hud--top" data-hud>
+      <a class="hud__brand" href="#hero" aria-label="AXION home">
+        <span class="hud__logo"></span>
+        <span class="hud__brandtext">AXION</span>
+        <span class="hud__brandtag">FREIGHT&nbsp;OS</span>
+      </a>
+      <nav class="hud__nav" aria-label="Primary">
+        <a href="#fleet" data-nav>Fleet</a>
+        <a href="#network" data-nav>Network</a>
+        <a href="#intelligence" data-nav>Intelligence</a>
+        <a href="#warehouse" data-nav>Warehouse</a>
+      </nav>
+      <a href="#deploy" class="hud__cta" data-magnetic>
+        <span>Request Access</span>
+        <span class="hud__cta-dot"></span>
+      </a>
+    </header>
+
+    <!-- live telemetry rail -->
+    <aside class="hud hud--rail" data-hud aria-hidden="true">
+      <div class="rail__item">
+        <span class="rail__k">FLEET</span>
+        <span class="rail__v" data-counter data-to="2480" data-suffix="">0</span>
+      </div>
+      <div class="rail__item">
+        <span class="rail__k">UPTIME</span>
+        <span class="rail__v" data-counter data-to="99" data-suffix=".98%">0</span>
+      </div>
+      <div class="rail__item">
+        <span class="rail__k">CO₂ ↓</span>
+        <span class="rail__v" data-counter data-to="34" data-suffix="%">0</span>
+      </div>
+      <div class="rail__pulse"><span></span></div>
+    </aside>
+
+    <!-- section progress indicator -->
+    <aside class="hud hud--progress" data-hud aria-hidden="true">
+      <button class="dot is-active" data-goto="hero" aria-label="Hero"></button>
+      <button class="dot" data-goto="fleet" aria-label="Fleet"></button>
+      <button class="dot" data-goto="network" aria-label="Network"></button>
+      <button class="dot" data-goto="intelligence" aria-label="Intelligence"></button>
+      <button class="dot" data-goto="warehouse" aria-label="Warehouse"></button>
+      <button class="dot" data-goto="deploy" aria-label="Deploy"></button>
+    </aside>
+
+    <!-- ===== Scroll content ===== -->
+    <main id="scroll">
+      <!-- HERO -->
+      <section class="section section--hero" id="hero" data-scene="hero">
+        <div class="grid-overlay" aria-hidden="true"></div>
+        <div class="hero__content">
+          <p class="eyebrow" data-reveal>
+            <span class="eyebrow__dot"></span> AUTONOMOUS FREIGHT&nbsp;/&nbsp;EST. 2049
+          </p>
+          <h1 class="hero__title">
+            <span class="line" data-split>Move the</span>
+            <span class="line" data-split>world without</span>
+            <span class="line line--accent" data-split>touching it.</span>
+          </h1>
+          <p class="hero__sub" data-reveal>
+            AXION is the real-time operating system for autonomous fleets —
+            every truck, route and warehouse rendered live, the moment it moves.
+          </p>
+          <div class="hero__actions" data-reveal>
+            <a href="#fleet" class="btn btn--primary" data-magnetic>
+              <span>Enter the fleet</span>
+            </a>
+            <a href="#intelligence" class="btn btn--ghost" data-magnetic>
+              <span>See the intelligence</span>
+            </a>
+          </div>
+        </div>
+        <div class="hero__scrollcue" data-reveal>
+          <span>SCROLL</span>
+          <span class="hero__scrollline"></span>
+        </div>
+      </section>
+
+      <!-- FLEET -->
+      <section class="section section--fleet" id="fleet" data-scene="fleet">
+        <div class="section__index">01 / FLEET</div>
+        <div class="panel panel--left glass" data-panel>
+          <h2 class="section__title">
+            <span data-split>The machine,</span>
+            <span data-split>deconstructed.</span>
+          </h2>
+          <p class="section__lead" data-reveal>
+            Watch a Class-8 hauler resolve from raw wireframe into a living,
+            sensor-aware vehicle. Every surface is telemetry.
+          </p>
+          <ul class="speclist" data-stagger>
+            <li><span class="speclist__k">Range</span><span class="speclist__v">1,120 km</span></li>
+            <li><span class="speclist__k">Payload</span><span class="speclist__v">36,000 kg</span></li>
+            <li><span class="speclist__k">Autonomy</span><span class="speclist__v">Level 4</span></li>
+            <li><span class="speclist__k">Sensors</span><span class="speclist__v">28 array</span></li>
+          </ul>
+        </div>
+        <div class="fleet__hint glass-soft" data-reveal>
+          <span class="fleet__hint-dot"></span>
+          DRAG ANYWHERE TO ORBIT THE CHASSIS
+        </div>
+      </section>
+
+      <!-- NETWORK -->
+      <section class="section section--network" id="network" data-scene="network">
+        <div class="section__index">02 / NETWORK</div>
+        <div class="panel panel--center glass" data-panel>
+          <h2 class="section__title section__title--center">
+            <span data-split>One grid.</span>
+            <span data-split>Every shipment.</span>
+          </h2>
+          <p class="section__lead section__lead--center" data-reveal>
+            Thousands of vehicles streaming position, load and intent into a
+            single planetary mesh — re-routing itself in milliseconds.
+          </p>
+          <div class="metrics" data-stagger>
+            <div class="metric glass-soft">
+              <span class="metric__v" data-counter data-to="142" data-suffix="K">0</span>
+              <span class="metric__k">Live routes</span>
+            </div>
+            <div class="metric glass-soft">
+              <span class="metric__v" data-counter data-to="61" data-suffix="ms">0</span>
+              <span class="metric__k">Re-route latency</span>
+            </div>
+            <div class="metric glass-soft">
+              <span class="metric__v" data-counter data-to="9" data-suffix=" continents">0</span>
+              <span class="metric__k">Coverage</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTELLIGENCE -->
+      <section class="section section--intel" id="intelligence" data-scene="intelligence">
+        <div class="section__index">03 / INTELLIGENCE</div>
+        <div class="panel panel--right glass" data-panel>
+          <h2 class="section__title">
+            <span data-split>A mind for</span>
+            <span data-split>every mile.</span>
+          </h2>
+          <p class="section__lead" data-reveal>
+            AXION's predictive core ingests weather, traffic, freight markets and
+            vehicle health — then decides before the road does.
+          </p>
+          <div class="intel__feed" data-stagger>
+            <div class="feedline glass-soft"><span class="feedline__t">DECISION</span> Re-balanced 1,204 loads across corridor EU-9</div>
+            <div class="feedline glass-soft"><span class="feedline__t">PREDICT</span> Storm front in 42 min — 311 trucks pre-routed</div>
+            <div class="feedline glass-soft"><span class="feedline__t">OPTIMIZE</span> Energy draw down 8.1% vs. baseline</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WAREHOUSE -->
+      <section class="section section--warehouse" id="warehouse" data-scene="warehouse">
+        <div class="section__index">04 / WAREHOUSE</div>
+        <div class="panel panel--left glass" data-panel>
+          <h2 class="section__title">
+            <span data-split>Where atoms</span>
+            <span data-split>meet the grid.</span>
+          </h2>
+          <p class="section__lead" data-reveal>
+            Autonomous docks breathe in real time — inbound, sorted and dispatched
+            without a hand on a pallet.
+          </p>
+          <ul class="speclist" data-stagger>
+            <li><span class="speclist__k">Throughput</span><span class="speclist__v">14k / hr</span></li>
+            <li><span class="speclist__k">Dock turn</span><span class="speclist__v">3.4 min</span></li>
+            <li><span class="speclist__k">Accuracy</span><span class="speclist__v">99.997%</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- DEPLOY / CTA -->
+      <section class="section section--deploy" id="deploy" data-scene="deploy">
+        <div class="grid-overlay grid-overlay--soft" aria-hidden="true"></div>
+        <div class="deploy__content">
+          <p class="eyebrow eyebrow--center" data-reveal>
+            <span class="eyebrow__dot"></span> EARLY ACCESS — Q3 2049
+          </p>
+          <h2 class="deploy__title">
+            <span class="line" data-split>Put your fleet</span>
+            <span class="line line--accent" data-split>on the grid.</span>
+          </h2>
+          <p class="deploy__sub" data-reveal>
+            We're onboarding a limited cohort of operators. Request access and
+            we'll render your network into AXION.
+          </p>
+          <form class="deploy__form glass" data-reveal id="accessForm">
+            <input type="email" required placeholder="operations@yourfleet.com" aria-label="Work email" />
+            <button type="submit" class="btn btn--primary" data-magnetic>
+              <span>Request access</span>
+            </button>
+          </form>
+          <p class="deploy__note" data-reveal id="formNote">
+            No spam. A human from the orbit team replies within 24h.
+          </p>
+        </div>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <span class="hud__logo"></span> AXION FREIGHT OS
+          </div>
+          <div class="footer__cols">
+            <span>© 2049 AXION DYNAMICS</span>
+            <span>BUILT WITH THREE.JS · GSAP · LENIS</span>
+            <span>SYSTEM&nbsp;NOMINAL <em class="footer__live"></em></span>
+          </div>
+        </footer>
+      </section>
+    </main>
+
+  </body>
+</html>
