@@ -1,8 +1,8 @@
 name: Deploy to GitHub Pages
 
-# Builds the Vite site and publishes it to GitHub Pages so the running
-# experience is viewable at a public URL. Runs on the default branch, the
-# feature branch, and on-demand.
+# Builds the Vite site and publishes dist/ to the gh-pages branch. This path
+# only needs `contents: write` (always available to the workflow token), so it
+# avoids the Pages "enablement" API that can fail on a fresh repo.
 on:
   push:
     branches:
@@ -11,17 +11,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# Allow one concurrent deployment; newer runs cancel queued ones.
 concurrency:
-  group: pages
+  group: pages-deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,19 +28,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/configure-pages@v5
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          enable_jekyll: false
+          force_orphan: true
