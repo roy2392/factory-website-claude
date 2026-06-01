@@ -9,12 +9,15 @@ camera move, every number counts up, every headline staggers into place.
 
 ## ✦ Experience
 
-- **Real‑time 3D world (Three.js + WebGL)** — a procedurally‑built Class‑8
-  autonomous hauler, an autonomous warehouse with roaming AGV lights, and a
-  planetary network globe, all rendered live in the browser with PBR materials,
-  soft shadows and `UnrealBloom` glow.
-- **Wireframe transitions** — the truck morphs from glowing wireframe into a
-  solid, sensor‑aware vehicle as you enter the Fleet section.
+- **Real‑time 3D world (Three.js + WebGL)** — a real **GLB hero vehicle**
+  streamed in live, an autonomous warehouse with roaming AGV lights, and a
+  planetary network globe, all rendered with PBR materials, image‑based
+  lighting (`RoomEnvironment`), soft shadows and `UnrealBloom` glow. A
+  procedural Class‑8 hauler renders instantly and is swapped for the GLB once
+  it decodes (and stays as a graceful fallback if the model fails to load).
+- **Wireframe transitions** — the vehicle morphs from glowing edge‑wireframe
+  into its solid, sensor‑aware form as you enter the Fleet section. The morph
+  works on any loaded GLB, not just the procedural mesh.
 - **Cinematic scroll storytelling (GSAP + ScrollTrigger)** — a single scrubbed
   timeline flies the camera between hand‑authored section states (position,
   target, FOV, wireframe mix) for continuous, film‑like motion.
@@ -39,11 +42,21 @@ camera move, every number counts up, every headline staggers into place.
 | Smooth scroll    | [lenis](https://github.com/darkroomengineering/lenis) |
 | Build            | [vite](https://vitejs.dev)                |
 
-> The trucks, warehouse and network are generated procedurally in Three.js so
-> the experience runs with **no external GLTF asset downloads**. The code is
-> structured so Spline/Blender‑exported GLTF assets can be dropped into
-> `public/assets/` and loaded in `src/three/truck.js` / `warehouse.js` to swap
-> in higher‑fidelity meshes without touching the scroll/camera system.
+> The hero vehicle is a real GLB (`public/assets/vehicle.glb`); the warehouse
+> and network are generated procedurally. The vehicle loader
+> (`src/three/vehicle.js`) normalises any GLB — converts Z‑up → Y‑up, recentres,
+> grounds and rescales it, builds the edge‑wireframe overlay and collects its
+> materials — so you can swap in a different model just by replacing the file.
+
+### Asset pipeline
+
+The supplied Sketchfab model used `KHR_materials_pbrSpecularGlossiness`, which
+modern three.js `GLTFLoader` no longer supports. It's converted offline to
+metallic‑roughness (and pruned/dedup'd) with [glTF‑Transform](https://gltf-transform.dev):
+
+```bash
+node tools/convert-car.mjs   # tools/_src_car.glb → public/assets/vehicle.glb
+```
 
 ## ✦ Getting started
 
@@ -62,8 +75,9 @@ src/
   main.js               # boot sequence + preloader
   styles.css            # sci‑fi design system (glass, grid, typography)
   three/
-    world.js            # renderer, camera rig, lights, bloom, section states
-    truck.js            # procedural autonomous hauler (solid + wireframe)
+    world.js            # renderer, camera rig, lights, bloom, IBL, section states
+    vehicle.js          # GLB hero-vehicle loader (normalise + wireframe overlay)
+    truck.js            # procedural autonomous hauler (solid + wireframe fallback)
     warehouse.js        # racking grid, dock portals, roaming AGVs
     particles.js        # data‑dust field + network globe
   scroll/

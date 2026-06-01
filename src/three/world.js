@@ -2,9 +2,11 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { createTruck } from './truck.js';
 import { createWarehouse } from './warehouse.js';
 import { createParticleField, createNetworkGlobe } from './particles.js';
+import { loadVehicle } from './vehicle.js';
 
 /**
  * AxionWorld — owns the WebGL scene, all 3D actors and the per-section
@@ -55,6 +57,11 @@ export class AxionWorld {
     this.scene = new THREE.Scene();
     this.scene.background = null;
     this.scene.fog = new THREE.FogExp2(0x05070d, 0.022);
+
+    // Image-based lighting so PBR metal/glass on the GLB (and the procedural
+    // truck) reads with proper reflections instead of flat black.
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
     this.camera = new THREE.PerspectiveCamera(
       42, window.innerWidth / window.innerHeight, 0.1, 200
@@ -108,10 +115,12 @@ export class AxionWorld {
   }
 
   _initActors() {
-    // Truck — hero/fleet actor
+    // Truck — hero/fleet actor. The procedural hauler renders immediately as a
+    // fallback; the real GLB vehicle streams in and swaps once decoded.
     this.truck = createTruck();
     this.truck.position.set(0, 0, 0);
     this.scene.add(this.truck);
+    this._loadHeroVehicle('./assets/vehicle.glb');
 
     // Warehouse — hidden until its section
     this.warehouse = createWarehouse();
@@ -165,6 +174,24 @@ export class AxionWorld {
       this.drag.y = e.clientY;
     });
     window.addEventListener('pointerup', () => { this.drag.active = false; });
+  }
+
+  /** Stream the real GLB hero vehicle and swap it in for the procedural truck. */
+  async _loadHeroVehicle(url) {
+    try {
+      const vehicle = await loadVehicle(url, 6.4);
+      vehicle.position.copy(this.truck.position);
+      // Inherit current spin/scale so the swap is seamless mid-scroll.
+      vehicle.rotation.y = this.truck.rotation.y;
+      vehicle.scale.copy(this.truck.scale);
+      this.scene.remove(this.truck);
+      disposeActor(this.truck);
+      this.truck = vehicle;
+      this.scene.add(this.truck);
+    } catch (err) {
+      // Keep the procedural hauler as a graceful fallback.
+      console.warn('[AXION] GLB vehicle failed to load, keeping procedural truck:', err);
+    }
   }
 
   resize() {
@@ -233,14 +260,15 @@ export class AxionWorld {
     this.network.userData.arcs.children.forEach((a, i) =>
       setOpacity(a, nw * (0.3 + 0.5 * Math.abs(Math.sin(this._t * 1.5 + i)))));
 
-    // truck recedes when warehouse/network take over
+    // truck recedes when warehouse/network take over (material-list based so
+    // it works for both the procedural hauler and the loaded GLB vehicle).
     const truckHide = Math.max(wh, nw * 0.7);
-    this.truck.userData.solid.children.forEach((m) => {
-      if (m.material && 'opacity' in m.material) {
-        m.material.transparent = true;
-        m.material.opacity = lerp(1, 0.0, truckHide);
-      }
-    });
+    const mats = this.truck.userData.solidMats || [];
+    for (const m of mats) {
+      m.transparent = true;
+      const base = m.userData.baseOpacity ?? 1;
+      m.opacity = base * (1 - truckHide);
+    }
 
     // particle field strongest in intelligence + network
     const dust = clamp01(Math.max(near('intelligence'), near('network') * 0.8, near('deploy') * 0.5));
@@ -285,10 +313,13 @@ export class AxionWorld {
     this.truck.position.y = Math.sin(t * 0.8) * 0.06;
 
     // wireframe morph: fade wire lines in, solids out
-    if (this.truck.userData.wireMat) {
-      this.truck.userData.wireMat.opacity += (wireMix - this.truck.userData.wireMat.opacity) * 0.08;
-      // pulse the trim emissive for life
-      this.truck.userData.trimMat.emissiveIntensity = 1.8 + Math.sin(t * 3) * 0.6;
+    const ud = this.truck.userData;
+    if (ud.wireMat) {
+      ud.wireMat.opacity += (wireMix - ud.wireMat.opacity) * 0.08;
+    }
+    // pulse the trim emissive for life
+    if (ud.trimMat) {
+      ud.trimMat.emissiveIntensity = 1.8 + Math.sin(t * 3) * 0.6;
     }
 
     // ---- Warehouse AGVs ----
@@ -341,4 +372,12 @@ function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 function setOpacity(obj, o) {
   obj.traverse?.((c) => { if (c.material && 'opacity' in c.material) { c.material.transparent = true; c.material.opacity = o; } });
   if (obj.material && 'opacity' in obj.material) { obj.material.transparent = true; obj.material.opacity = o; }
+}
+function disposeActor(root) {
+  root.traverse?.((c) => {
+    if (c.geometry) c.geometry.dispose?.();
+    const m = c.material;
+    if (Array.isArray(m)) m.forEach((x) => x.dispose?.());
+    else m?.dispose?.();
+  });
 }

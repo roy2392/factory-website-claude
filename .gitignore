@@ -3,3 +3,7 @@ dist
 .DS_Store
 *.local
 .vite
+
+# Raw uploaded source asset (kept local; the converted, shipped model lives
+# in public/assets/vehicle.glb). Re-run tools/convert-car.mjs to regenerate.
+tools/_src_car.glb
